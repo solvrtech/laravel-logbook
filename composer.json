@@ -1,0 +1,39 @@
+{
+    "name": "solvrtech/laravel-logbook",
+    "description": "The Package provide integrate the client app into logbook app.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Solvrtech\\Laravel\\Logbook\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "solvrtech"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.0.2",
+        "monolog/monolog": "^2.8",
+        "psr/log": "^3.0",
+        "illuminate/contracts": "^9.27",
+        "illuminate/console": "^9.27",
+        "illuminate/support": "^9.27",
+        "symfony/http-client": "^5.4"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.x-dev"
+        },
+        "laravel": {
+            "providers": [
+                "Solvrtech\\Laravel\\Logbook\\LogbookServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
