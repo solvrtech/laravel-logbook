@@ -8,10 +8,13 @@ use Monolog\Formatter\JsonFormatter;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\LogRecord;
 use Psr\Log\LogLevel;
+use Solvrtech\Laravel\Logbook\LogbookConfig;
 use Symfony\Component\HttpClient\HttpClient;
 
 class LogbookHandler extends AbstractProcessingHandler
 {
+    use LogbookConfig;
+
     public function __construct(
         int|string|LogLevel $level = LogLevel::DEBUG,
         bool $bubble = true
@@ -27,61 +30,68 @@ class LogbookHandler extends AbstractProcessingHandler
     protected function write(LogRecord|array $record): void
     {
         $httpClient = HttpClient::create();
+        if ($this->getMinLevel() <= $this->toIntLevel($record['level_name'])) {
+            try {
+                $httpClient->request(
+                    'POST',
+                    "{$this->getAPIUrl()}/api/log/save",
+                    [
+                        'headers' => [
+                            'Content-Type' => 'application/json',
+                            'Accept' => 'application/json',
+                            'x-lb-token' => $this->getAPIkey(),
+                            'x-lb-version' => $this->getVersion()
+                        ],
+                        'body' => $record['formatted'],
+                    ]
+                );
+            } catch (Exception $e) {
+            }
+        }
+    }
+
+    /**
+     * Get the minimum log level allowed to be stored from environment.
+     * 
+     * @return int
+     */
+    private function getMinLevel(): int
+    {
+        $level = config('logbook.level');
+
+        if (null !== $level) {
+            return $this->toIntLevel($level);
+        }
+
+        return 0;
+    }
+
+    /**
+     * Translate log level into int level
+     * 
+     * @param string $level
+     * 
+     * @return int
+     */
+    private function toIntLevel(string $level): int
+    {
+        $intLevel = 0;
+
         try {
-            $httpClient->request(
-                'POST',
-                "{$this->getAPIUrl()}/api/log/save",
-                [
-                    'headers' => [
-                        'Content-Type' => 'application/json',
-                        'Accept' => 'application/json',
-                        'token' => $this->getAPIkey(),
-                    ],
-                    'body' => $record['formatted'],
-                ]
-            );
+            $intLevel = match (strtolower($level)) {
+                'debug' => 0,
+                'info' => 1,
+                'notice' => 2,
+                'warning' => 3,
+                'error' => 4,
+                'critical' => 5,
+                'alert' => 6,
+                'emergency' => 7
+            };
         } catch (Exception $e) {
         }
-    }
 
-    /**
-     * Get logbook API url from environment.
-     *
-     * @return string
-     *
-     * @throws Exception
-     */
-    private function getAPIUrl(): string
-    {
-        $url = config('logbook.api.url');
-
-        if (null === $url) {
-            throw new Exception('Logbook url not found');
-        }
-
-        if ('/' === substr($url, -1)) {
-            $url = substr($url, 0, -1);
-        }
-
-        return $url;
-    }
-
-    /**
-     * Get logbook API key from environment.
-     *
-     * @return string
-     *
-     * @throws Exception
-     */
-    private function getAPIKey(): string
-    {
-        $key = config('logbook.api.key');
-
-        if (null === $key) {
-            throw new Exception('Logbook key not found');
-        }
-
-        return $key;
+        return $intLevel;
     }
 
     /**

@@ -6,6 +6,7 @@ use Monolog\Logger as Monolog;
 use Monolog\Processor\PsrLogMessageProcessor;
 use Psr\Log\LoggerInterface;
 use Solvrtech\Laravel\Logbook\Handler\LogbookHandler;
+use Solvrtech\Laravel\Logbook\Processor\LogbookProcessor;
 use Stringable;
 
 class Logbook implements LoggerInterface
@@ -33,7 +34,7 @@ class Logbook implements LoggerInterface
     {
         $logger = new Monolog($this->getChannel());
         $logger->pushHandler(new LogbookHandler());
-        $logger->pushProcessor(new PsrLogMessageProcessor());
+        $logger->pushProcessor(new LogbookProcessor());
 
         return $logger;
     }

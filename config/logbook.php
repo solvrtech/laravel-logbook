@@ -11,5 +11,17 @@ return [
          * The key of logbook client app.
          */
         'key' => env('LOGBOOK_KEY')
-    ]
+    ],
+    /**
+     * The minimum log level allowed to be stored.
+     * DEBUG
+     * INFO
+     * NOTICE
+     * WARNING
+     * ERROR
+     * CRITICAL
+     * ALERT
+     * EMERGENCY
+     */
+    'level' => env('LOGBOOK_LEVEL', 'DEBUG')
 ];
