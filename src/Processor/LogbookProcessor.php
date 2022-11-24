@@ -12,10 +12,10 @@ class LogbookProcessor implements ProcessorInterface
     private array $extraFields = [
         'url' => 'REQUEST_URI',
         'ip' => 'REMOTE_ADDR',
-        'http_method' => 'REQUEST_METHOD',
+        'httpMethod' => 'REQUEST_METHOD',
         'server' => 'SERVER_NAME',
         'browser' => 'HTTP_SEC_CH_UA',
-        'user_agent' => 'HTTP_USER_AGENT',
+        'userAgent' => 'HTTP_USER_AGENT',
     ];
 
     public function __construct($serverData = null)

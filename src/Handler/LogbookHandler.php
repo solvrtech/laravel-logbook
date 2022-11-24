@@ -42,7 +42,7 @@ class LogbookHandler extends AbstractProcessingHandler
                             'x-lb-token' => $this->getAPIkey(),
                             'x-lb-version' => $this->getVersion()
                         ],
-                        'body' => $record['formatted'],
+                        'body' => json_encode($record['formatted']),
                     ]
                 );
             } catch (Exception $e) {
