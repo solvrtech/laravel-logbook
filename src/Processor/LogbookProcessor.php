@@ -14,7 +14,6 @@ class LogbookProcessor implements ProcessorInterface
         'ip' => 'REMOTE_ADDR',
         'http_method' => 'REQUEST_METHOD',
         'server' => 'SERVER_NAME',
-        'referrer' => 'HTTP_REFERER',
         'browser' => 'HTTP_SEC_CH_UA',
         'user_agent' => 'HTTP_USER_AGENT',
     ];

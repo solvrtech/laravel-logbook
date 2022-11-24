@@ -4,7 +4,7 @@ namespace Solvrtech\Laravel\Logbook\Handler;
 
 use Exception;
 use Monolog\Formatter\FormatterInterface;
-use Monolog\Formatter\JsonFormatter;
+use Monolog\Formatter\NormalizerFormatter;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\LogRecord;
 use Psr\Log\LogLevel;
@@ -99,6 +99,6 @@ class LogbookHandler extends AbstractProcessingHandler
      */
     protected function getDefaultFormatter(): FormatterInterface
     {
-        return new JsonFormatter();
+        return new NormalizerFormatter();
     }
 }
