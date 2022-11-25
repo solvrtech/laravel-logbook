@@ -43,8 +43,7 @@ class HealthStatusCommand extends Command
                         'Accept' => 'application/json',
                         'x-lb-token' => $this->getAPIkey(),
                         'x-lb-version' => $this->getVersion()
-                    ],
-                    'body' => "",
+                    ]
                 ]
             );
         } catch (Exception $e) {
