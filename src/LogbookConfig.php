@@ -15,17 +15,16 @@ trait LogbookConfig
      */
     public function getAPIUrl(): string
     {
-        $url = config('logbook.api.url');
+        if (config()->has('logbook.api.url')) {
+            $url = config('logbook.api.url');
+            if (str_ends_with($url, '/')) {
+                $url = substr($url, 0, -1);
+            }
 
-        if (null === $url) {
-            throw new Exception('Logbook url not found');
+            return $url;
         }
 
-        if ('/' === substr($url, -1)) {
-            $url = substr($url, 0, -1);
-        }
-
-        return $url;
+        throw new Exception('Logbook url not found');
     }
 
     /**
@@ -37,13 +36,11 @@ trait LogbookConfig
      */
     public function getAPIKey(): string
     {
-        $key = config('logbook.api.key');
-
-        if (null === $key) {
-            throw new Exception('Logbook key not found');
+        if (config()->has('logbook.api.key')) {
+            return config('logbook.api.key');
         }
 
-        return $key;
+        throw new Exception('Logbook key not found');
     }
 
     /**
@@ -53,15 +50,15 @@ trait LogbookConfig
      */
     public function getVersion(): string
     {
-        $vesion = [
-            'laravel' => app()->version()
+        $version = [
+            'core' => "Laravel v" . app()->version()
         ];
 
-        $appVersion = config('app.version');
-        if (null !== $appVersion && is_string($appVersion)) {
-            $vesion['app'] = $appVersion;
+        if (config()->has('app.version')) {
+            $appVersion = config('app.version');
+            $version['app'] = is_string($appVersion) ? $appVersion : '';
         }
 
-        return json_encode($vesion);
+        return json_encode($version);
     }
 }

@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Console\Command;
 use Solvrtech\Laravel\Logbook\LogbookConfig;
 use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class HealthStatusCommand extends Command
 {
@@ -29,8 +30,10 @@ class HealthStatusCommand extends Command
      * Execute the console command.
      *
      * @return int
+     *
+     * @throws TransportExceptionInterface
      */
-    public function handle()
+    public function handle(): int
     {
         $httpClient = HttpClient::create();
         try {

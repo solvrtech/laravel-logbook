@@ -16,12 +16,12 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.0.2",
-        "monolog/monolog": "^2.8",
+        "monolog/monolog": "~2.0",
         "psr/log": "^3.0",
-        "illuminate/contracts": "^9.27",
-        "illuminate/console": "^9.27",
-        "illuminate/support": "^9.27",
-        "symfony/http-client": "^5.4"
+        "illuminate/contracts": "~9.0",
+        "illuminate/console": "~9.0",
+        "illuminate/support": "~9.0",
+        "symfony/http-client": "~5.0"
     },
     "extra": {
         "branch-alias": {
