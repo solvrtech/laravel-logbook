@@ -4,12 +4,13 @@ namespace Solvrtech\Laravel\Logbook\Handler;
 
 use Exception;
 use Monolog\Formatter\FormatterInterface;
-use Monolog\Formatter\NormalizerFormatter;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\LogRecord;
 use Psr\Log\LogLevel;
+use Solvrtech\Laravel\Logbook\Formatter\LogbookFormatter;
 use Solvrtech\Laravel\Logbook\LogbookConfig;
 use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class LogbookHandler extends AbstractProcessingHandler
 {
@@ -45,7 +46,7 @@ class LogbookHandler extends AbstractProcessingHandler
                         'body' => json_encode($record['formatted']),
                     ]
                 );
-            } catch (Exception $e) {
+            } catch (Exception|TransportExceptionInterface $e) {
             }
         }
     }
@@ -57,10 +58,8 @@ class LogbookHandler extends AbstractProcessingHandler
      */
     private function getMinLevel(): int
     {
-        $level = config('logbook.level');
-
-        if (null !== $level) {
-            return $this->toIntLevel($level);
+        if (config()->has('logbook.level')) {
+            return $this->toIntLevel(config('logbook.level'));
         }
 
         return 0;
@@ -99,6 +98,6 @@ class LogbookHandler extends AbstractProcessingHandler
      */
     protected function getDefaultFormatter(): FormatterInterface
     {
-        return new NormalizerFormatter();
+        return new LogbookFormatter();
     }
 }

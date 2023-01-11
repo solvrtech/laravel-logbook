@@ -3,7 +3,6 @@
 namespace Solvrtech\Laravel\Logbook;
 
 use Monolog\Logger as Monolog;
-use Monolog\Processor\PsrLogMessageProcessor;
 use Psr\Log\LoggerInterface;
 use Solvrtech\Laravel\Logbook\Handler\LogbookHandler;
 use Solvrtech\Laravel\Logbook\Processor\LogbookProcessor;
