@@ -20,7 +20,7 @@ class LogbookFormatter implements FormatterInterface
     /**
      * @inheritDoc
      */
-    public function formatBatch(LogRecord|array $records): LogRecord|array
+    public function formatBatch(array $records): array
     {
         foreach ($records as $key => $record) {
             $records[$key] = $this->format($record);
