@@ -9,14 +9,19 @@ trait LogbookConfig
     /**
      * Get logbook API url from environment.
      *
+     * @param array|null $config
+     * 
      * @return string
      *
      * @throws Exception
      */
-    public function getAPIUrl(): string
+    public function getAPIUrl(array|null $config = null): string
     {
-        if (config()->has('logbook.api.url')) {
-            $url = config('logbook.api.url');
+        if (null === $config)
+            $config = config()->has('logging.channels.logbook') ? config('logging.channels.logbook') : null;
+
+        if (isset($config['api']['url'])) {
+            $url = $config['api']['url'];
             if (str_ends_with($url, '/')) {
                 $url = substr($url, 0, -1);
             }
@@ -30,15 +35,19 @@ trait LogbookConfig
     /**
      * Get logbook API key from environment.
      *
+     * @param array|null $config
+     * 
      * @return string
      *
      * @throws Exception
      */
-    public function getAPIKey(): string
+    public function getAPIKey(array|null $config = null): string
     {
-        if (config()->has('logbook.api.key')) {
-            return config('logbook.api.key');
-        }
+        if (null === $config)
+            $config = config()->has('logging.channels.logbook') ? config('logging.channels.logbook') : null;
+
+        if (isset($config['api']['key']))
+            return $config['api']['key'];
 
         throw new Exception('Logbook key not found');
     }
