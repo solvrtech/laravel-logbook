@@ -17,6 +17,7 @@ class LogbookHandler extends AbstractProcessingHandler
     use LogbookConfig;
 
     public function __construct(
+        private array $config,
         int|string|LogLevel $level = LogLevel::DEBUG,
         bool $bubble = true
     ) {
@@ -35,41 +36,37 @@ class LogbookHandler extends AbstractProcessingHandler
             try {
                 $httpClient->request(
                     'POST',
-                    "{$this->getAPIUrl()}/api/log/save",
+                    "{$this->getAPIUrl($this->config)}/api/log/save",
                     [
                         'headers' => [
                             'Content-Type' => 'application/json',
                             'Accept' => 'application/json',
-                            'x-lb-token' => $this->getAPIkey(),
+                            'x-lb-token' => $this->getAPIkey($this->config),
                             'x-lb-version' => $this->getVersion()
                         ],
                         'body' => json_encode($record['formatted']),
                     ]
                 );
-            } catch (Exception|TransportExceptionInterface $e) {
+            } catch (Exception | TransportExceptionInterface $e) {
             }
         }
     }
 
     /**
      * Get the minimum log level allowed to be stored from environment.
-     * 
+     *
      * @return int
      */
     private function getMinLevel(): int
     {
-        if (config()->has('logbook.level')) {
-            return $this->toIntLevel(config('logbook.level'));
-        }
-
-        return 0;
+        return $this->toIntLevel($this->config['level']);
     }
 
     /**
      * Translate log level into int level
-     * 
+     *
      * @param string $level
-     * 
+     *
      * @return int
      */
     private function toIntLevel(string $level): int

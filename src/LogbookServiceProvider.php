@@ -15,10 +15,12 @@ class LogbookServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/logbook.php', 'logbook');
+        $this->mergeConfigFrom(__DIR__ . '/../config/logging.php', 'logging');
         $this->app->bind(
             LoggerInterface::class,
-            Logbook::class
+            function ($app) {
+                return new Logbook($app);
+            }
         );
     }
 
@@ -37,7 +39,7 @@ class LogbookServiceProvider extends ServiceProvider
         }
 
         $this->publishes([
-            __DIR__ . '/../config/logbook.php' => config_path('logbook.php'),
+            __DIR__ . '/../config/logging.php' => config_path('logging.php'),
         ]);
     }
 }
