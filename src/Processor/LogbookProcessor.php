@@ -3,6 +3,7 @@
 namespace Solvrtech\Laravel\Logbook\Processor;
 
 use ArrayAccess;
+use Monolog\LogRecord;
 use Monolog\Processor\ProcessorInterface;
 use Solvrtech\Laravel\Logbook\Model\ClientModel;
 use UnexpectedValueException;
@@ -33,7 +34,7 @@ class LogbookProcessor implements ProcessorInterface
     /**
      * {@inheritDoc}
      */
-    public function __invoke(array $record): array
+    public function __invoke(LogRecord|array $record): LogRecord|array
     {
         // skip processing if for some reason request data
         if (!isset($this->serverData['REQUEST_URI'])) {
@@ -47,12 +48,12 @@ class LogbookProcessor implements ProcessorInterface
 
     /**
      * Append extra fields to record array
-     * 
-     * @param  array $extra
-     * 
-     * @return array
+     *
+     * @param LogRecord|array $extra
+     *
+     * @return LogRecord|array
      */
-    private function appendExtraFields(array $extra): array
+    private function appendExtraFields(LogRecord|array $extra): LogRecord|array
     {
         return [
             'additional' => $extra,

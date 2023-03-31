@@ -2,9 +2,9 @@
 
 namespace Solvrtech\Laravel\Logbook;
 
+use Illuminate\Log\LogManager;
 use Solvrtech\Laravel\Logbook\Command\HealthStatusCommand;
 use Illuminate\Support\ServiceProvider;
-use Psr\Log\LoggerInterface;
 
 class LogbookServiceProvider extends ServiceProvider
 {
@@ -15,9 +15,8 @@ class LogbookServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/logging.php', 'logging');
         $this->app->bind(
-            LoggerInterface::class,
+            LogManager::class,
             function ($app) {
                 return new Logbook($app);
             }
