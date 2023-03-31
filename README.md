@@ -6,7 +6,7 @@ installitation
 composer require solvrtech/laravel-logbook
 ```
 
-Configuration
+Configuration<br>
 You should publish the config/logging.php config file with:
 ```bash
 php artisan vendor:publish --provider=Solvrtech\Laravel\Logbook\LogbookServiceProvider --force
