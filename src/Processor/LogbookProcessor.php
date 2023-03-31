@@ -48,9 +48,9 @@ class LogbookProcessor implements ProcessorInterface
 
     /**
      * Append extra fields to record array
-     * 
-     * @param  LogRecord|array $extra
-     * 
+     *
+     * @param LogRecord|array $extra
+     *
      * @return LogRecord|array
      */
     private function appendExtraFields(LogRecord|array $extra): LogRecord|array
