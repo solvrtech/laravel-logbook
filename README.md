@@ -1,6 +1,6 @@
 # laravel-logbook
 
-installitation
+Installitation
 
 ```bash
 composer require solvrtech/laravel-logbook
@@ -13,7 +13,7 @@ php artisan vendor:publish --tag=logbook --force
 ```
 
 ```bash
-.env
+// .env
 
 LOGBOOK_API_URL="https://logbook.com"
 LOGBOOK_API_KEY="4eaa39a6ff57c4..."
