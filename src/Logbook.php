@@ -162,11 +162,11 @@ class Logbook extends LogManager
      */
     protected function createLogbookDriver(array $config)
     {
-        $logger = new Monolog($this->parseChannel($config));
-        $logger->pushHandler(new LogbookHandler($config, $this->level($config)));
-        $logger->pushProcessor(new LogbookProcessor());
-
-        return $logger;
+        return new Monolog(
+            $this->parseChannel($config),
+            [new LogbookHandler($config, $this->level($config))],
+            [new LogbookProcessor()]
+        );
     }
 
     /**

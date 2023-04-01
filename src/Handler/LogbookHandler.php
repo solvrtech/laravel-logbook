@@ -5,6 +5,7 @@ namespace Solvrtech\Laravel\Logbook\Handler;
 use Exception;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\AbstractProcessingHandler;
+use Monolog\Level;
 use Monolog\LogRecord;
 use Psr\Log\LogLevel;
 use Solvrtech\Laravel\Logbook\Formatter\LogbookFormatter;
@@ -18,7 +19,7 @@ class LogbookHandler extends AbstractProcessingHandler
 
     public function __construct(
         private array $config,
-        int|string|LogLevel $level = LogLevel::DEBUG,
+        int|string|LogLevel|Level $level = LogLevel::DEBUG,
         bool $bubble = true
     ) {
         parent::__construct($level, $bubble);
