@@ -40,10 +40,12 @@ class Logbook extends LogManager
      */
     public function stack(array $channels, $channel = null)
     {
+        $sharedContext = isset($this->sharedContext) ? $this->sharedContext : [];
+
         return (new Logger(
             $this->createStackDriver(compact('channels', 'channel')),
             $this->app['events']
-        ))->withContext($this->sharedContext);
+        ))->withContext($sharedContext);
     }
 
     /**
@@ -97,7 +99,12 @@ class Logbook extends LogManager
     {
         try {
             return $this->channels[$name] ?? with($this->resolve($name, $config), function ($logger) use ($name) {
-                return $this->channels[$name] = $this->tap($name, new Logger($logger, $this->app['events']))->withContext($this->sharedContext);
+                $sharedContext = isset($this->sharedContext) ? $this->sharedContext : [];
+
+                return $this->channels[$name] = $this->tap(
+                    $name,
+                    new Logger($logger, $this->app['events'])
+                )->withContext($sharedContext);
             });
         } catch (Throwable $e) {
             return tap($this->createEmergencyLogger(), function ($logger) use ($e) {
@@ -158,7 +165,7 @@ class Logbook extends LogManager
      * Create an instance of the logbook driver.
      *
      * @param  array  $config
-     * @return \Psr\Log\LoggerInterface
+     * @return LoggerInterface
      */
     protected function createLogbookDriver(array $config)
     {
