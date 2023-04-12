@@ -1,6 +1,6 @@
 <?php
 
-namespace Solvrtech\Laravel\Logbook;
+namespace Solvrtech\Logbook;
 
 use Closure;
 use Throwable;
@@ -14,9 +14,8 @@ use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\FingersCrossedHandler;
 use Monolog\Handler\WhatFailureGroupHandler;
 use Monolog\Handler\FormattableHandlerInterface;
-use Solvrtech\Laravel\Logbook\Handler\LogbookHandler;
-use Solvrtech\Laravel\Logbook\Processor\LogbookProcessor;
-
+use Solvrtech\Logbook\Handler\LogbookHandler;
+use Solvrtech\Logbook\Processor\LogbookProcessor;
 
 class Logbook extends LogManager
 {
@@ -26,7 +25,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function build(array $config)
     {
@@ -36,7 +35,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function stack(array $channels, $channel = null)
     {
@@ -49,7 +48,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected function createStackDriver(array $config)
     {
@@ -77,7 +76,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function channel($channel = null)
     {
@@ -85,7 +84,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function driver($driver = null)
     {
@@ -93,7 +92,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected function get($name, ?array $config = null)
     {
@@ -116,7 +115,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected function tap($name, Logger $logger)
     {
@@ -130,7 +129,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected function parseTap($tap)
     {
@@ -138,7 +137,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected function resolve($name, ?array $config = null)
     {
@@ -177,7 +176,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected function prepareHandlers(array $handlers)
     {
@@ -189,7 +188,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected function prepareHandler(HandlerInterface $handler, array $config = [])
     {
@@ -217,7 +216,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected function formatter()
     {
@@ -227,7 +226,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function shareContext(array $context)
     {
@@ -241,7 +240,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function sharedContext()
     {
@@ -249,7 +248,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function flushSharedContext()
     {
@@ -259,7 +258,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected function getFallbackChannelName()
     {
@@ -267,7 +266,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected function configurationFor($name)
     {
@@ -275,7 +274,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getDefaultDriver()
     {
@@ -283,7 +282,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function setDefaultDriver($name)
     {
@@ -291,7 +290,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function extend($driver, Closure $callback)
     {
@@ -301,7 +300,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function forgetChannel($driver = null)
     {
@@ -313,7 +312,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected function parseDriver($driver)
     {
@@ -327,7 +326,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getChannels()
     {
@@ -335,7 +334,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function emergency($message, array $context = []): void
     {
@@ -343,7 +342,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function alert($message, array $context = []): void
     {
@@ -351,7 +350,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function critical($message, array $context = []): void
     {
@@ -359,7 +358,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function error($message, array $context = []): void
     {
@@ -367,7 +366,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function warning($message, array $context = []): void
     {
@@ -375,7 +374,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function notice($message, array $context = []): void
     {
@@ -383,7 +382,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function info($message, array $context = []): void
     {
@@ -391,7 +390,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function debug($message, array $context = []): void
     {
@@ -399,7 +398,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function log($level, $message, array $context = []): void
     {
@@ -407,7 +406,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function __call($method, $parameters)
     {

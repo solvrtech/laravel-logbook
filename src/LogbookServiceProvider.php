@@ -1,10 +1,15 @@
 <?php
 
-namespace Solvrtech\Laravel\Logbook;
+namespace Solvrtech\Logbook;
 
-use Solvrtech\Laravel\Logbook\Command\HealthStatusCommand;
 use Illuminate\Support\ServiceProvider;
 use Psr\Log\LoggerInterface;
+use Solvrtech\Logbook\Check\CacheCheck;
+use Solvrtech\Logbook\Check\CPULoadCheck;
+use Solvrtech\Logbook\Check\DataBaseCheck;
+use Solvrtech\Logbook\Check\RedisCheck;
+use Solvrtech\Logbook\Check\UsedDiskCheck;
+use Solvrtech\Logbook\Middleware\LogbookMiddleware;
 
 class LogbookServiceProvider extends ServiceProvider
 {
@@ -21,6 +26,19 @@ class LogbookServiceProvider extends ServiceProvider
                 return new Logbook($app);
             }
         );
+
+        $this->app->bind(
+            LogbookHealth::class,
+            function ($app) {
+                return new LogbookHealth([
+                    CacheCheck::new(),
+                    UsedDiskCheck::new(),
+                    CPULoadCheck::new(),
+                    DataBaseCheck::new(),
+                    RedisCheck::new()
+                ]);
+            }
+        );
     }
 
     /**
@@ -30,15 +48,15 @@ class LogbookServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // register artisan command
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                HealthStatusCommand::class
-            ]);
-        }
-
+        // publish configuration
         $this->publishes([
             __DIR__ . '/../config/logging.php' => config_path('logging.php'),
         ], 'logbook');
+
+        // register middleware
+        app('router')->aliasMiddleware('logbook', LogbookMiddleware::class);
+
+        // publish route
+        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
     }
 }

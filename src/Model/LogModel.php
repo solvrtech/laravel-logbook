@@ -1,6 +1,6 @@
 <?php
 
-namespace Solvrtech\Laravel\Logbook\Model;
+namespace Solvrtech\Logbook\Model;
 
 class LogModel
 {

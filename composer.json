@@ -5,7 +5,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Solvrtech\\Laravel\\Logbook\\": "src/"
+            "Solvrtech\\Logbook\\": "src/"
         }
     },
     "authors": [
@@ -16,10 +16,14 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=8.0",
-        "illuminate/contracts": "~8.0|~9.0|~10.0",
         "illuminate/console": "~8.0|~9.0|~10.0",
-        "illuminate/support": "~8.0|~9.0|~10.0",
+        "illuminate/contracts": "~8.0|~9.0|~10.0",
         "illuminate/log": "~8.0|~9.0|~10.0",
+        "illuminate/support": "~8.0|~9.0|~10.0",
+        "illuminate/database": "~8.0|~9.0|~10.0",
+        "illuminate/redis": "~8.0|~9.0|~10.0",
+        "illuminate/http": "~8.0|~9.0|~10.0",
+        "ketut/random-string": "1.x-dev",
         "symfony/http-client": "~5.0|~6.0"
     },
     "extra": {
@@ -28,7 +32,7 @@
         },
         "laravel": {
             "providers": [
-                "Solvrtech\\Laravel\\Logbook\\LogbookServiceProvider"
+                "Solvrtech\\Logbook\\LogbookServiceProvider"
             ]
         }
     },

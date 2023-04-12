@@ -1,6 +1,6 @@
 <?php
 
-namespace Solvrtech\Laravel\Logbook\Handler;
+namespace Solvrtech\Logbook\Handler;
 
 use Exception;
 use Monolog\Formatter\FormatterInterface;
@@ -8,8 +8,8 @@ use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Level;
 use Monolog\LogRecord;
 use Psr\Log\LogLevel;
-use Solvrtech\Laravel\Logbook\Formatter\LogbookFormatter;
-use Solvrtech\Laravel\Logbook\LogbookConfig;
+use Solvrtech\Logbook\Formatter\LogbookFormatter;
+use Solvrtech\Logbook\LogbookConfig;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 

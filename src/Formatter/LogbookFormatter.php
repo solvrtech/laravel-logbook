@@ -1,11 +1,11 @@
 <?php
 
-namespace Solvrtech\Laravel\Logbook\Formatter;
+namespace Solvrtech\Logbook\Formatter;
 
 use Monolog\Formatter\FormatterInterface;
 use Monolog\LogRecord;
-use Solvrtech\Laravel\Logbook\Model\ClientModel;
-use Solvrtech\Laravel\Logbook\Model\LogModel;
+use Solvrtech\Logbook\Model\ClientModel;
+use Solvrtech\Logbook\Model\LogModel;
 use Throwable;
 
 class LogbookFormatter implements FormatterInterface
@@ -18,7 +18,7 @@ class LogbookFormatter implements FormatterInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function formatBatch(array $records): array
     {
@@ -30,7 +30,7 @@ class LogbookFormatter implements FormatterInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function format(LogRecord|array $record): LogModel
     {
@@ -55,9 +55,6 @@ class LogbookFormatter implements FormatterInterface
             );
     }
 
-    /**
-     *
-     */
     public function normalizeContext(array $context): void
     {
         foreach ($context as $value) {
