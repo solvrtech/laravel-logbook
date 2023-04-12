@@ -1,6 +1,6 @@
 <?php
 
-namespace Solvrtech\Laravel\Logbook;
+namespace Solvrtech\Logbook;
 
 use Exception;
 
@@ -18,7 +18,9 @@ trait LogbookConfig
     public function getAPIUrl(array|null $config = null): string
     {
         if (null === $config)
-            $config = config()->has('logging.channels.logbook') ? config('logging.channels.logbook') : null;
+            $config = config()->has('logging.channels.logbook') ?
+                config('logging.channels.logbook') :
+                null;
 
         if (isset($config['api']['url'])) {
             $url = $config['api']['url'];
@@ -44,7 +46,9 @@ trait LogbookConfig
     public function getAPIKey(array|null $config = null): string
     {
         if (null === $config)
-            $config = config()->has('logging.channels.logbook') ? config('logging.channels.logbook') : null;
+            $config = config()->has('logging.channels.logbook') ?
+                config('logging.channels.logbook') :
+                null;
 
         if (isset($config['api']['key']))
             return $config['api']['key'];
