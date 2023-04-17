@@ -53,7 +53,7 @@ class DataBaseCheck extends CheckService
         return array_map(function (ConnectionInterface $connection) {
             try {
                 (array) $result =  $connection->select(
-                    "SELECT table_schema '{$connection->getDatabaseName()}', ROUND(SUM(data_length + index_length) / 1024 / 1024, 1) as size FROM information_schema.tables GROUP BY table_schema",
+                    "SELECT table_schema '{$connection->getDatabaseName()}', ROUND(SUM(data_length + index_length) / 1048576, 2) as size FROM information_schema.tables GROUP BY table_schema",
                 );
 
                 return array_sum(array_column($result, 'size'));

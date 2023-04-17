@@ -57,13 +57,13 @@ class RedisCheck extends CheckService
 
             if ($connection instanceof PhpRedisConnection)
                 return round(
-                    $redisInfo['used_memory'] / 1024 / 1024,
+                    $redisInfo['used_memory'] / 1048576,
                     2
                 );
 
             if ($connection instanceof PredisConnection)
                 return round(
-                    $redisInfo['Memory']['used_memory'] / 1024 / 1024,
+                    $redisInfo['Memory']['used_memory'] / 1048576,
                     2
                 );
 

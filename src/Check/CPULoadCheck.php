@@ -28,8 +28,7 @@ class CPULoadCheck extends CheckService
 
             $condition->setStatus(ConditionModel::OK)
                 ->setMeta([
-                    'cpuLoad' => $cpuLoad,
-                    'unit' => '%'
+                    'cpuLoad' => $cpuLoad
                 ]);
         } catch (Exception $e) {
         }
