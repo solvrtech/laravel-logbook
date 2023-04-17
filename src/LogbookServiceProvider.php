@@ -7,6 +7,7 @@ use Psr\Log\LoggerInterface;
 use Solvrtech\Logbook\Check\CacheCheck;
 use Solvrtech\Logbook\Check\CPULoadCheck;
 use Solvrtech\Logbook\Check\DataBaseCheck;
+use Solvrtech\Logbook\Check\MemoryCheck;
 use Solvrtech\Logbook\Check\RedisCheck;
 use Solvrtech\Logbook\Check\UsedDiskCheck;
 use Solvrtech\Logbook\Middleware\LogbookMiddleware;
@@ -32,10 +33,11 @@ class LogbookServiceProvider extends ServiceProvider
             function ($app) {
                 return new LogbookHealth([
                     CacheCheck::new(),
-                    UsedDiskCheck::new(),
                     CPULoadCheck::new(),
                     DataBaseCheck::new(),
-                    RedisCheck::new()
+                    MemoryCheck::new(),
+                    RedisCheck::new(),
+                    UsedDiskCheck::new()
                 ]);
             }
         );

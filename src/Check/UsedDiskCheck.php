@@ -25,7 +25,7 @@ class UsedDiskCheck extends CheckService
         $condition = new ConditionModel();
 
         try {
-            $diskSpace = self::getDiskSpace();
+            $diskSpace = self::getUsedDiskSpace();
 
             $condition->setStatus(ConditionModel::OK)
                 ->setMeta([
@@ -39,13 +39,13 @@ class UsedDiskCheck extends CheckService
     }
 
     /**
-     * Get available disk space on the system in percentage.
+     * Get used disk space on the system in percentage.
      *
      * @return int
      *
      * @throws LogbookHealthException
      */
-    private function getDiskSpace(): int
+    private function getUsedDiskSpace(): int
     {
         $process = Process::fromShellCommandline('df -P .');
         $process->run();
