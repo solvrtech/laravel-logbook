@@ -21,6 +21,8 @@ class LogbookServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton('log', fn ($app) => new Logbook($app));
+
         $this->app->bind(
             LoggerInterface::class,
             function ($app) {
