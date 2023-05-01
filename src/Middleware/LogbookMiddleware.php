@@ -5,9 +5,9 @@ namespace Solvrtech\Logbook\Middleware;
 use Closure;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Http\RedirectResponse;
 use Solvrtech\Logbook\LogbookConfig;
 
 class LogbookMiddleware
@@ -16,23 +16,23 @@ class LogbookMiddleware
 
     /**
      * Handle an incoming request.
-     * 
-     * @param  Request  $request
-     * @param  Closure  $next
-     * 
+     *
+     * @param Request $request
+     * @param Closure $next
+     *
      * @return Response|RedirectResponse|JsonResponse
      */
     public function handle(Request $request, Closure $next): Response|RedirectResponse|JsonResponse
     {
-        $expectedKey = $request->header('logbook-key');
+        $givenKey = $request->header('x-logbook-key');
 
         try {
-            $actualKey = $this->getAPIKey();
+            $logbookKey = $this->getAPIKey();
         } catch (Exception $e) {
             abort(401);
         }
 
-        if (null === $expectedKey || $expectedKey !== $actualKey)
+        if (null === $givenKey || $givenKey !== $logbookKey)
             abort(401);
 
         return $next($request);
