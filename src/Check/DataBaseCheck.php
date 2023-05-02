@@ -74,7 +74,7 @@ class DataBaseCheck extends CheckService
      */
     private function getConnections(): array
     {
-        DB::getPdo();
+        $PDO = DB::getPdo();
         $connection = DB::getConnections();
 
         if (0 === count($connection))
