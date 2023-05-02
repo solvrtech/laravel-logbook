@@ -80,7 +80,7 @@ class RedisCheck extends CheckService
      */
     private function getConnections(): array
     {
-        Redis::client();
+        $client = Redis::client();
         $connections = Redis::connections();
 
         if (0 === count($connections))
