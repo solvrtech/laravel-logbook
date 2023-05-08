@@ -7,14 +7,11 @@ composer require solvrtech/laravel-logbook
 ```
 
 Configuration<br>
-You should publish the config/logging.php config file with:
+You should publish the laravel-logbook config file with:
 
 ```bash
-php artisan vendor:publish --tag=logbook --force
+php artisan vendor:publish --tag=logbook
 ```
-
-If you do not want to change the existing logging.php configuration,
-add the following configuration:
 
 ```bash
 // config/logging.php
@@ -41,8 +38,6 @@ LOGBOOK_API_KEY="4eaa39a6ff57c4..."
 // Instance ID is a unique identifier per instance of your apps
 LOGBOOK_INSTANCE_ID="default_server"
 ```
-
-Additional: send current project version.
 
 ```bash
 // config/app.php
