@@ -85,7 +85,7 @@ return [
             'handler_with' => [
                 'host' => env('PAPERTRAIL_URL'),
                 'port' => env('PAPERTRAIL_PORT'),
-                'connectionString' => 'tls://' . env('PAPERTRAIL_URL') . ':' . env('PAPERTRAIL_PORT'),
+                'connectionString' => 'tls://'.env('PAPERTRAIL_URL').':'.env('PAPERTRAIL_PORT'),
             ],
         ],
 
@@ -120,11 +120,7 @@ return [
 
         'logbook' => [
             'driver' => 'logbook',
-            'api' => [
-                'url' => env('LOGBOOK_API_URL', ''),
-                'key' => env('LOGBOOK_API_KEY', '')
-            ],
-            'level' => env('LOG_LEVEL', 'debug')
+            'level' => env('LOG_LEVEL', 'debug'),
         ],
     ],
 ];

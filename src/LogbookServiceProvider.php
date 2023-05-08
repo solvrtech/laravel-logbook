@@ -8,7 +8,6 @@ use Solvrtech\Logbook\Check\CacheCheck;
 use Solvrtech\Logbook\Check\CPULoadCheck;
 use Solvrtech\Logbook\Check\DataBaseCheck;
 use Solvrtech\Logbook\Check\MemoryCheck;
-use Solvrtech\Logbook\Check\RedisCheck;
 use Solvrtech\Logbook\Check\UsedDiskCheck;
 use Solvrtech\Logbook\Middleware\LogbookMiddleware;
 
@@ -21,7 +20,7 @@ class LogbookServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton('log', fn ($app) => new Logbook($app));
+        $this->app->singleton('log', fn($app) => new Logbook($app));
 
         $this->app->bind(
             LoggerInterface::class,
@@ -38,8 +37,7 @@ class LogbookServiceProvider extends ServiceProvider
                     CPULoadCheck::new(),
                     DataBaseCheck::new(),
                     MemoryCheck::new(),
-                    RedisCheck::new(),
-                    UsedDiskCheck::new()
+                    UsedDiskCheck::new(),
                 ]);
             }
         );
@@ -54,13 +52,14 @@ class LogbookServiceProvider extends ServiceProvider
     {
         // publish configuration
         $this->publishes([
-            __DIR__ . '/../config/logging.php' => config_path('logging.php'),
+            __DIR__.'/../config/logging.php' => config_path('logging.php'),
+            __DIR__.'/../config/logbook.php' => config_path('logbook.php'),
         ], 'logbook');
 
         // register middleware
         app('router')->aliasMiddleware('logbook', LogbookMiddleware::class);
 
         // publish route
-        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
     }
 }
