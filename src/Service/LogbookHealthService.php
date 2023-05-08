@@ -3,11 +3,15 @@
 namespace Solvrtech\Logbook\Service;
 
 use DateTime;
+use Exception;
 use Solvrtech\Logbook\Check\CheckInterface;
+use Solvrtech\Logbook\LogbookConfig;
 use Solvrtech\Logbook\LogbookHealth;
 
 class LogbookHealthService
 {
+    use LogbookConfig;
+
     private LogbookHealth $health;
 
     public function __construct(LogbookHealth $health)
@@ -19,6 +23,8 @@ class LogbookHealthService
      * Get all health check results.
      *
      * @return array
+     *
+     * @throws Exception
      */
     public function getResults(): array
     {
@@ -28,7 +34,8 @@ class LogbookHealthService
 
         return [
             'datetime' => (new DateTime())->format('Y-m-d H:i:s'),
-            'checks' => $results
+            'instanceId' => $this->getInstanceId(),
+            'checks' => $results,
         ];
     }
 }

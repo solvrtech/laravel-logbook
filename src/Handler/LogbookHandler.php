@@ -43,12 +43,13 @@ class LogbookHandler extends AbstractProcessingHandler
                             'Content-Type' => 'application/json',
                             'Accept' => 'application/json',
                             'x-lb-token' => $this->getAPIkey($this->config),
-                            'x-lb-version' => $this->getVersion()
+                            'x-lb-version' => $this->getVersion(),
+                            'x-lb-instance-id' => $this->getInstanceId(),
                         ],
                         'body' => json_encode($record['formatted']),
                     ]
                 );
-            } catch (Exception | TransportExceptionInterface $e) {
+            } catch (Exception|TransportExceptionInterface $e) {
             }
         }
     }
