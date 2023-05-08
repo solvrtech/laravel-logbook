@@ -9,19 +9,13 @@ trait LogbookConfig
     /**
      * Get logbook API url from environment.
      *
-     * @param array|null $config
-     *
      * @return string
      *
      * @throws Exception
      */
-    public function getAPIUrl(array|null $config = null): string
+    public function getAPIUrl(): string
     {
-        if (null === $config) {
-            $config = config()->has('logbook') ?
-                config('logbook') :
-                null;
-        }
+        $config = config('logbook');
 
         if (isset($config['api']['url'])) {
             $url = $config['api']['url'];
@@ -38,19 +32,13 @@ trait LogbookConfig
     /**
      * Get logbook API key from environment.
      *
-     * @param array|null $config
-     *
      * @return string
      *
      * @throws Exception
      */
-    public function getAPIKey(array|null $config = null): string
+    public function getAPIKey(): string
     {
-        if (null === $config) {
-            $config = config()->has('logbook') ?
-                config('logbook') :
-                null;
-        }
+        $config = config('logbook');
 
         if (isset($config['api']['key'])) {
             return $config['api']['key'];
@@ -62,19 +50,13 @@ trait LogbookConfig
     /**
      * Get logbook instance id from environment.
      *
-     * @param array|null $config
-     *
      * @return string
      *
      * @throws Exception
      */
-    public function getInstanceId(array|null $config = null): string
+    public function getInstanceId(): string
     {
-        if (null === $config) {
-            $config = config()->has('logbook') ?
-                config('logbook') :
-                null;
-        }
+        $config = config('logbook');
 
         if (isset($config['instance_id'])) {
             return $config['instance_id'];
