@@ -37,12 +37,12 @@ class LogbookHandler extends AbstractProcessingHandler
             try {
                 $httpClient->request(
                     'POST',
-                    "{$this->getAPIUrl($this->config)}/api/log/save",
+                    "{$this->getAPIUrl()}/api/log/save",
                     [
                         'headers' => [
                             'Content-Type' => 'application/json',
                             'Accept' => 'application/json',
-                            'x-lb-token' => $this->getAPIkey($this->config),
+                            'x-lb-token' => $this->getAPIkey(),
                             'x-lb-version' => $this->getVersion(),
                             'x-lb-instance-id' => $this->getInstanceId(),
                         ],
