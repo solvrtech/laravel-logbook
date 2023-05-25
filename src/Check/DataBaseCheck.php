@@ -4,7 +4,6 @@ namespace Solvrtech\Logbook\Check;
 
 use Exception;
 use Illuminate\Database\ConnectionInterface;
-use Illuminate\Database\MySqlConnection;
 use Illuminate\Database\PostgresConnection;
 use Illuminate\Support\Facades\DB;
 use Solvrtech\Logbook\Exception\LogbookHealthException;
@@ -15,7 +14,7 @@ class DataBaseCheck extends CheckService
     /**
      * {@inheritDoc}
      */
-    public function getKey():string
+    public function getKey(): string
     {
         return 'database';
     }
@@ -33,7 +32,7 @@ class DataBaseCheck extends CheckService
             $condition->setStatus(ConditionModel::OK)
                 ->setMeta([
                     'databaseSize' => $database,
-                    'unit' => 'Mb'
+                    'unit' => 'Mb',
                 ]);
         } catch (Exception $e) {
         }
@@ -53,15 +52,11 @@ class DataBaseCheck extends CheckService
         $connections = self::getConnections();
 
         return array_map(function (ConnectionInterface $connection) {
-            if ($connection instanceof MySqlConnection) {
-                return $this->checkMySqlSize($connection, $connection->getDatabaseName());
-            }
-
             if ($connection instanceof PostgresConnection) {
                 return $this->checkPostgresSize($connection, $connection->getDatabaseName());
+            } else {
+                return $this->checkMySqlSize($connection, $connection->getDatabaseName());
             }
-
-            throw new LogbookHealthException();
         }, $connections);
     }
 
@@ -69,18 +64,12 @@ class DataBaseCheck extends CheckService
      * Get all database connections.
      *
      * @return array
-     *
-     * @throws LogbookHealthException
      */
     private function getConnections(): array
     {
-        $PDO = DB::getPdo();
-        $connection = DB::getConnections();
-
-        if (0 === count($connection))
-            throw new LogbookHealthException();
-
-        return $connection;
+        return [
+            'default' => DB::connection(),
+        ];
     }
 
     /**
@@ -96,11 +85,11 @@ class DataBaseCheck extends CheckService
     private function checkPostgresSize(ConnectionInterface $connection, string $dbName): float|int
     {
         try {
-            $result =  $connection->select(
-                "SELECT ROUND(pg_database_size(:dbName)/ 1048576, 2) as db_size",
+            $result = $connection->selectOne(
+                "SELECT ROUND(pg_database_size(:dbName)/ 1048576, 2) as size",
             );
 
-            return $result['size'];
+            return $result->size;
         } catch (Exception $e) {
             throw new LogbookHealthException();
         }
@@ -119,7 +108,7 @@ class DataBaseCheck extends CheckService
     private function checkMySqlSize(ConnectionInterface $connection, string $dbName): float|int
     {
         try {
-            (array) $result =  $connection->select(
+            (array)$result = $connection->select(
                 "SELECT table_schema '{$dbName}', ROUND(SUM(data_length + index_length) / 1048576, 2) as size FROM information_schema.tables GROUP BY table_schema",
             );
 
