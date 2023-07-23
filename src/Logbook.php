@@ -161,7 +161,7 @@ class Logbook extends LogManager
     }
 
     /**
-     * Create an instance of the logbook driver.
+     * Creates an instance of LogBook driver.
      *
      * @param  array  $config
      * @return LoggerInterface

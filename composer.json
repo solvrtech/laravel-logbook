@@ -1,6 +1,6 @@
 {
     "name": "solvrtech/laravel-logbook",
-    "description": "The Package provide integrate the client app into logbook app.",
+    "description": "This package provides integration with LogBook.",
     "type": "library",
     "license": "MIT",
     "autoload": {

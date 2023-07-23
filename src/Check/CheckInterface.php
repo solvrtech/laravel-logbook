@@ -7,7 +7,7 @@ use Solvrtech\Logbook\Model\ConditionModel;
 interface CheckInterface
 {
     /**
-     * Get the result of the health check.
+     * Returns the health checks result.
      * 
      * @return ConditionModel
      */

@@ -7,7 +7,7 @@ use Exception;
 trait LogbookConfig
 {
     /**
-     * Get logbook API url from environment.
+     * Returns LogBook API URL from environment.
      *
      * @return string
      *
@@ -30,7 +30,7 @@ trait LogbookConfig
     }
 
     /**
-     * Get logbook API key from environment.
+     * Returns LogBook API key from environment.
      *
      * @return string
      *
@@ -48,7 +48,7 @@ trait LogbookConfig
     }
 
     /**
-     * Get logbook instance id from environment.
+     * Returns LogBook instance id from environment.
      *
      * @return string
      *
@@ -66,7 +66,7 @@ trait LogbookConfig
     }
 
     /**
-     * Get app and framework version.
+     * Returns app and framework version.
      *
      * @return string
      */
