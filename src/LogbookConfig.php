@@ -44,7 +44,7 @@ trait LogbookConfig
             return $config['api']['key'];
         }
 
-        throw new Exception('Logbook API key not found');
+        throw new Exception('Logbook API key was not found');
     }
 
     /**
@@ -62,7 +62,7 @@ trait LogbookConfig
             return $config['instance_id'];
         }
 
-        throw new Exception('Logbook instance_id not found');
+        throw new Exception('Logbook instance_id was not found');
     }
 
     /**
@@ -73,7 +73,7 @@ trait LogbookConfig
     public function getVersion(): string
     {
         $version = [
-            'core' => "Laravel v".app()->version(),
+            'core' => "Laravel v" . app()->version(),
         ];
 
         if (config()->has('app.version')) {
