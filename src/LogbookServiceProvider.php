@@ -27,6 +27,8 @@ class LogbookServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->mergeConfigFrom(__DIR__.'/../config/logbook.php', 'logbook');
+
         $this->app->singleton('log', function ($app) {
             $transport = $this->transport();
 
