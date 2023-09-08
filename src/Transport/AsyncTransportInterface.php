@@ -14,7 +14,7 @@ interface AsyncTransportInterface
     /**
      * Deletes log items based on their IDs.
      *
-     * @param  array|null  $ids
+     * @param array|null $ids
      *
      * @return void
      */

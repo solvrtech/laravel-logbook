@@ -12,8 +12,8 @@ class SyncTransport implements TransportInterface
     /**
      * Send log to the logbook app with synchronous behavior
      *
-     * @param  string  $body
-     * @param  array  $headers
+     * @param string $body
+     * @param array $headers
      *
      * @return array
      */
@@ -29,7 +29,7 @@ class SyncTransport implements TransportInterface
                 "{$apiUrl}/api/log/save",
                 [
                     'headers' => $headers,
-                    'body'    => $body,
+                    'body' => $body,
                 ]
             );
         } catch (Exception|TransportExceptionInterface $exception) {

@@ -19,34 +19,34 @@ use function is_string;
 class Connection
 {
     private const DEFAULT_OPTIONS = [
-        'host'               => '127.0.0.1',
-        'port'               => 6379,
-        'stream'             => 'logs',
-        'group'              => 'logbook',
-        'consumer'           => 'consumer',
-        'batch'              => 15,
-        'auto_setup'         => true,
+        'host' => '127.0.0.1',
+        'port' => 6379,
+        'stream' => 'logs',
+        'group' => 'logbook',
+        'consumer' => 'consumer',
+        'batch' => 15,
+        'auto_setup' => true,
         'stream_max_entries' => 0,
         // any value higher than 0 defines an approximate maximum number of stream entries
-        'dbindex'            => 0,
-        'redeliver_timeout'  => 3600,
+        'dbindex' => 0,
+        'redeliver_timeout' => 3600,
         // Timeout before redeliver messages still in pending state (seconds)
-        'claim_interval'     => 60000,
+        'claim_interval' => 60000,
         // Interval by which pending/abandoned messages should be checked
-        'lazy'               => false,
-        'auth'               => null,
-        'serializer'         => Redis::SERIALIZER_PHP,
-        'sentinel_master'    => null,
+        'lazy' => false,
+        'auth' => null,
+        'serializer' => Redis::SERIALIZER_PHP,
+        'sentinel_master' => null,
         // String, master to look for (optional, default is NULL meaning Sentinel support is disabled)
-        'timeout'            => 0.0,
+        'timeout' => 0.0,
         // Float, value in seconds (optional, default is 0 meaning unlimited)
-        'read_timeout'       => 0.0,
+        'read_timeout' => 0.0,
         //  Float, value in seconds (optional, default is 0 meaning unlimited)
-        'retry_interval'     => 0,
+        'retry_interval' => 0,
         //  Int, value in milliseconds (optional, default is 0)
-        'persistent_id'      => null,
+        'persistent_id' => null,
         // String, persistent connection id (optional, default is NULL meaning not persistent)
-        'ssl'                => null,
+        'ssl' => null,
         // see https://php.net/context.ssl
     ];
 
@@ -65,13 +65,13 @@ class Connection
             throw new LogicException('The redis transport requires php-redis 4.3.0 or higher.');
         }
 
-        $opts           += self::DEFAULT_OPTIONS;
-        $host           = $opts['host'];
-        $port           = $opts['port'];
-        $auth           = $opts['auth'];
+        $opts += self::DEFAULT_OPTIONS;
+        $host = $opts['host'];
+        $port = $opts['port'];
+        $auth = $opts['auth'];
         $sentinelMaster = $opts['sentinel_master'];
 
-        if (null !== $sentinelMaster && ! class_exists(RedisSentinel::class)) {
+        if (null !== $sentinelMaster && !class_exists(RedisSentinel::class)) {
             throw new InvalidArgumentException('Redis Sentinel support requires the "redis" extension v5.2 or higher.');
         }
 
@@ -82,7 +82,7 @@ class Connection
         }
 
         if (is_array($host) || $redis instanceof RedisCluster) {
-            $hosts       = is_string($host) ? [$host.':'.$port] : $host; // Always ensure we have an array
+            $hosts = is_string($host) ? [$host.':'.$port] : $host; // Always ensure we have an array
             $this->redis = static function () use ($redis, $hosts, $auth, $opts) {
                 return self::initializeRedisCluster($redis, $hosts, $auth, $opts);
             };
@@ -97,7 +97,7 @@ class Connection
                     $opts['read_timeout']
                 );
 
-                if ( ! $address = $sentinelClient->getMasterAddrByName($sentinelMaster)) {
+                if (!$address = $sentinelClient->getMasterAddrByName($sentinelMaster)) {
                     throw new InvalidArgumentException(
                         sprintf(
                             'Failed to retrieve master information from master name "%s" and address "%s:%d".',
@@ -116,7 +116,7 @@ class Connection
             };
         }
 
-        if ( ! $opts['lazy']) {
+        if (!$opts['lazy']) {
             $this->getRedis();
         }
 
@@ -125,17 +125,17 @@ class Connection
             throw new InvalidArgumentException(sprintf('"%s" should be configured, got an empty string.', $key));
         }
 
-        $this->stream     = $opts['stream'];
-        $this->group      = $opts['group'];
-        $this->consumer   = $opts['consumer'];
-        $this->queue      = $this->stream.'__queue';
-        $this->batch      = $opts['batch'];
-        $this->autoSetup  = $opts['auto_setup'];
+        $this->stream = $opts['stream'];
+        $this->group = $opts['group'];
+        $this->consumer = $opts['consumer'];
+        $this->queue = $this->stream.'__queue';
+        $this->batch = $opts['batch'];
+        $this->autoSetup = $opts['auto_setup'];
         $this->maxEntries = $opts['stream_max_entries'];
     }
 
     /**
-     * @param  string|string[]|null  $auth
+     * @param string|string[]|null $auth
      *
      * @throws RedisClusterException
      */
@@ -150,7 +150,7 @@ class Connection
             $hosts,
             $params['timeout'],
             $params['read_timeout'],
-            (bool) ($params['persistent'] ?? false),
+            (bool)($params['persistent'] ?? false),
             $auth,
             ...defined('Redis::SCAN_PREFIX') ? [$params['ssl'] ?? null] : []
         );
@@ -160,7 +160,7 @@ class Connection
     }
 
     /**
-     * @param  string|string[]|null  $auth
+     * @param string|string[]|null $auth
      *
      * @throws RedisException
      */
@@ -184,11 +184,11 @@ class Connection
 
         $redis->setOption(Redis::OPT_SERIALIZER, $params['serializer']);
 
-        if (null !== $auth && ! $redis->auth($auth)) {
+        if (null !== $auth && !$redis->auth($auth)) {
             throw new InvalidArgumentException('Redis connection failed: '.$redis->getLastError());
         }
 
-        if (($params['dbindex'] ?? false) && ! $redis->select($params['dbindex'])) {
+        if (($params['dbindex'] ?? false) && !$redis->select($params['dbindex'])) {
             throw new InvalidArgumentException('Redis connection failed: '.$redis->getLastError());
         }
 
@@ -208,11 +208,11 @@ class Connection
     {
         $opts = self::DEFAULT_OPTIONS;
 
-        $opts['host']   = $options['host'];
-        $opts['auth']   = $options['password'];
-        $opts['port']   = $options['port'];
+        $opts['host'] = $options['host'];
+        $opts['auth'] = $options['password'];
+        $opts['port'] = $options['port'];
         $opts['stream'] = $options['stream'];
-        $opts['batch']  = $options['batch'];
+        $opts['batch'] = $options['batch'];
 
         return new self($opts);
     }
@@ -248,15 +248,15 @@ class Connection
         }
 
         $batch = [];
-        $ids   = [];
+        $ids = [];
 
         foreach ($logs[$this->stream] ?? [] as $key => $log) {
             $log['log'] = json_decode($log['log'], true);
 
-            $ids[]               = $key;
-            $batch['headers']    = $log['log']['headers'];
+            $ids[] = $key;
+            $batch['headers'] = $log['log']['headers'];
             $batch['logs'][$key] = [
-                'id'  => $key,
+                'id' => $key,
                 'log' => json_decode($log['log']['body'], true),
             ];
         }
@@ -296,7 +296,7 @@ class Connection
 
         try {
             $log = json_encode([
-                'body'    => $body,
+                'body' => $body,
                 'headers' => $headers,
             ]);
 
@@ -318,7 +318,7 @@ class Connection
             throw new TransportException($error ?? $e->getMessage(), 0, $e);
         }
 
-        if ( ! $added) {
+        if (!$added) {
             if ($error = $redis->getLastError() ?: null) {
                 $redis->clearLastError();
             }
@@ -342,7 +342,7 @@ class Connection
             throw new TransportException($e->getMessage(), 0, $e);
         }
 
-        if ( ! $acknowledged) {
+        if (!$acknowledged) {
             if ($error = $redis->getLastError() ?: null) {
                 $redis->clearLastError();
             }
@@ -366,7 +366,7 @@ class Connection
             }
         }
 
-        if ( ! $unlink) {
+        if (!$unlink) {
             $redis->del($this->stream, $this->queue);
         }
     }

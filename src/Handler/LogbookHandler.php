@@ -37,12 +37,12 @@ class LogbookHandler extends AbstractProcessingHandler
     {
         if ($this->getMinLevel() <= $this->toIntLevel($record['level_name'])) {
             $headers = [
-                'Content-Type'     => 'application/json',
-                'Accept'           => 'application/json',
-                'x-lb-token'       => $this->getAPIKey(),
-                'x-lb-version'     => $this->getVersion(),
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'x-lb-token' => $this->getAPIKey(),
+                'x-lb-version' => $this->getVersion(),
                 'x-lb-instance-id' => $this->getInstanceId(),
-                'url'              => $this->getAPIUrl(),
+                'url' => $this->getAPIUrl(),
             ];
 
             $this->transport->send(json_encode($record['formatted']), $headers);
@@ -62,7 +62,7 @@ class LogbookHandler extends AbstractProcessingHandler
     /**
      * Translate log level into int level
      *
-     * @param  string  $level
+     * @param string $level
      *
      * @return int
      */

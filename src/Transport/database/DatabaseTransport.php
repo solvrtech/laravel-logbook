@@ -20,8 +20,8 @@ class DatabaseTransport implements TransportInterface, AsyncTransportInterface
     /**
      * Send log to the database with asynchronous behavior
      *
-     * @param  string  $body
-     * @param  array  $headers
+     * @param string $body
+     * @param array $headers
      *
      * @return array
      */
@@ -32,7 +32,7 @@ class DatabaseTransport implements TransportInterface, AsyncTransportInterface
             DB::table($this->log_table)->insert([
                 'logs' => json_encode(
                     [
-                        'body'    => $body,
+                        'body' => $body,
                         'headers' => $headers,
                     ]
                 ),
@@ -48,7 +48,7 @@ class DatabaseTransport implements TransportInterface, AsyncTransportInterface
      */
     private function createLogsTable(): void
     {
-        if ( ! Schema::hasTable('logbook_logs')) {
+        if (!Schema::hasTable('logbook_logs')) {
             Schema::create('logbook_logs', function (Blueprint $table) {
                 $table->id();
                 $table->json('logs');
@@ -65,23 +65,23 @@ class DatabaseTransport implements TransportInterface, AsyncTransportInterface
     public function get(): ?array
     {
         $response = DB::table($this->log_table)
-                      ->whereNull('sent_at')
-                      ->limit($this->databaseBatchLimit())
-                      ->get();
+            ->whereNull('sent_at')
+            ->limit($this->databaseBatchLimit())
+            ->get();
 
         if (null === $response) {
             return null;
         }
 
         $batch = [];
-        $ids   = [];
+        $ids = [];
 
         foreach ($response as $key => $item) {
-            $item->logs          = json_decode($item->logs, true);
-            $ids[]               = $item->id;
-            $batch['headers']    = $item->logs['headers'];
+            $item->logs = json_decode($item->logs, true);
+            $ids[] = $item->id;
+            $batch['headers'] = $item->logs['headers'];
             $batch['logs'][$key] = [
-                'id'  => $item->id,
+                'id' => $item->id,
                 'log' => json_decode($item->logs['body'], true),
             ];
         }
@@ -95,7 +95,7 @@ class DatabaseTransport implements TransportInterface, AsyncTransportInterface
     /**
      * Marks logs as sent based on their IDs.
      *
-     * @param  array  $ids
+     * @param array $ids
      *
      * @return void
      */
@@ -111,7 +111,7 @@ class DatabaseTransport implements TransportInterface, AsyncTransportInterface
     /**
      * Deletes sent logs from the database.
      *
-     * @param  array|null  $ids
+     * @param array|null $ids
      *
      * @return void
      */

@@ -19,7 +19,6 @@ use Solvrtech\Logbook\Transport\TransportInterface;
 
 class LogbookServiceProvider extends ServiceProvider
 {
-
     /**
      * Register the service provider.
      *
@@ -69,7 +68,7 @@ class LogbookServiceProvider extends ServiceProvider
     {
         $config = config('logbook');
 
-        if ( ! isset($config['transport'])) {
+        if (!isset($config['transport'])) {
             throw new Exception('Logbook transport not found');
         }
 
@@ -92,7 +91,6 @@ class LogbookServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-
         // register artisan command
         if ($this->app->runningInConsole()) {
             $this->commands([

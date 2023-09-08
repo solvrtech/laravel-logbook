@@ -41,7 +41,7 @@ class ConsumeCommand extends Command
     public function handle()
     {
         while (true) {
-            if ( ! $this->transport instanceof AsyncTransportInterface) {
+            if (!$this->transport instanceof AsyncTransportInterface) {
                 sleep(60);
                 continue;
             }
@@ -70,14 +70,11 @@ class ConsumeCommand extends Command
     /**
      * Try to send the batch of logs into the logbook; if successful, mark it as sent all logs
      *
-     * @param  array  $logs
-     * @param  array  $ids
-     *
-     * @return void
+     * @param array $logs
+     * @param array $ids
      */
     private function send(array $logs, array $ids): void
     {
-
         $headers = $logs['headers'];
         unset($headers['url']);
         $apiUrl = $logs['headers']['url'];
@@ -90,7 +87,7 @@ class ConsumeCommand extends Command
                 "{$apiUrl}/api/log/save/batch",
                 [
                     'headers' => $headers,
-                    'body'    => json_encode($logs),
+                    'body' => json_encode($logs),
                 ]
             );
         } catch (Exception|TransportExceptionInterface $exception) {
