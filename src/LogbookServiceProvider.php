@@ -2,6 +2,7 @@
 
 namespace Solvrtech\Logbook;
 
+use Exception;
 use Illuminate\Support\ServiceProvider;
 use Psr\Log\LoggerInterface;
 use Solvrtech\Logbook\Check\CacheCheck;
@@ -9,23 +10,36 @@ use Solvrtech\Logbook\Check\CPULoadCheck;
 use Solvrtech\Logbook\Check\DataBaseCheck;
 use Solvrtech\Logbook\Check\MemoryCheck;
 use Solvrtech\Logbook\Check\UsedDiskCheck;
+use Solvrtech\Logbook\Console\ConsumeCommand;
 use Solvrtech\Logbook\Middleware\LogbookMiddleware;
+use Solvrtech\Logbook\Transport\database\DatabaseTransport;
+use Solvrtech\Logbook\Transport\redis\RedisTransport;
+use Solvrtech\Logbook\Transport\sync\SyncTransport;
+use Solvrtech\Logbook\Transport\TransportInterface;
 
 class LogbookServiceProvider extends ServiceProvider
 {
+
     /**
      * Register the service provider.
      *
      * @return void
+     * @throws Exception
      */
     public function register(): void
     {
-        $this->app->singleton('log', fn($app) => new Logbook($app));
+        $this->app->singleton('log', function ($app) {
+            $transport = $this->transport();
+
+            return new Logbook($app, new $transport());
+        });
 
         $this->app->bind(
             LoggerInterface::class,
             function ($app) {
-                return new Logbook($app);
+                $transport = $this->transport();
+
+                return new Logbook($app, new $transport());
             }
         );
 
@@ -41,6 +55,34 @@ class LogbookServiceProvider extends ServiceProvider
                 ]);
             }
         );
+
+        $this->app->bind(TransportInterface::class, $this->transport());
+    }
+
+    /**
+     * Get the current configuration for the transport. (redis, database, or sync)
+     *
+     * @return string
+     * @throws Exception
+     */
+    private function transport(): string
+    {
+        $config = config('logbook');
+
+        if ( ! isset($config['transport'])) {
+            throw new Exception('Logbook transport not found');
+        }
+
+        switch ($config['transport']['driver']) {
+            case 'sync':
+                return SyncTransport::class;
+            case 'redis':
+                return RedisTransport::class;
+            case 'database':
+                return DatabaseTransport::class;
+        }
+
+        throw new Exception('Something wrong with transport configuration!');
     }
 
     /**
@@ -50,6 +92,14 @@ class LogbookServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+        // register artisan command
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                ConsumeCommand::class,
+            ]);
+        }
+
         // publish configuration
         $this->publishes([
             __DIR__.'/../config/logging.php' => config_path('logging.php'),

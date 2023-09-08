@@ -73,14 +73,46 @@ trait LogbookConfig
     public function getVersion(): string
     {
         $version = [
-            'core' => "Laravel v" . app()->version(),
+            'core' => "Laravel v".app()->version(),
         ];
 
         if (config()->has('app.version')) {
-            $appVersion = config('app.version');
+            $appVersion     = config('app.version');
             $version['app'] = is_string($appVersion) ? $appVersion : '';
         }
 
         return json_encode($version);
+    }
+
+    /**
+     * Get the Redis configuration.
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function getRedisConfig(): array
+    {
+        $config = config('logbook');
+
+        if ( ! isset($config['options']['redis'])) {
+            throw new Exception('Logbook transport not found');
+        }
+
+        $redis             = $config['options']['redis'];
+        $redis['password'] = ! empty($redis['password']) ? $redis['password'] : null;
+
+        return $redis;
+    }
+
+    /**
+     * Get the batch limit for database operations.
+     *
+     * @return int
+     */
+    public function databaseBatchLimit(): int
+    {
+        $config = config('logbook');
+
+        return $config['options']['database']['batch'];
     }
 }

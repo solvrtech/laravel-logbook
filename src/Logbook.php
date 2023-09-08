@@ -3,24 +3,28 @@
 namespace Solvrtech\Logbook;
 
 use Closure;
-use Throwable;
 use Illuminate\Log\Logger;
-use Psr\Log\LoggerInterface;
-use InvalidArgumentException;
 use Illuminate\Log\LogManager;
-use Monolog\Logger as Monolog;
+use InvalidArgumentException;
 use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\FingersCrossedHandler;
-use Monolog\Handler\WhatFailureGroupHandler;
 use Monolog\Handler\FormattableHandlerInterface;
+use Monolog\Handler\HandlerInterface;
+use Monolog\Handler\WhatFailureGroupHandler;
+use Monolog\Logger as Monolog;
+use Psr\Log\LoggerInterface;
 use Solvrtech\Logbook\Handler\LogbookHandler;
 use Solvrtech\Logbook\Processor\LogbookProcessor;
+use Solvrtech\Logbook\Transport\TransportInterface;
+use Throwable;
 
 class Logbook extends LogManager
 {
-    public function __construct($app)
+    private TransportInterface $transport;
+
+    public function __construct($app, TransportInterface $transport)
     {
+        $this->transport = $transport;
         parent::__construct($app);
     }
 
@@ -32,6 +36,121 @@ class Logbook extends LogManager
         unset($this->channels['ondemand']);
 
         return $this->get('ondemand', $config);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function get($name, ?array $config = null)
+    {
+        try {
+            return $this->channels[$name] ?? with($this->resolve($name, $config), function ($logger) use ($name) {
+                $sharedContext = isset($this->sharedContext) ? $this->sharedContext : [];
+
+                return $this->channels[$name] = $this->tap(
+                    $name,
+                    new Logger($logger, $this->app['events'])
+                )->withContext($sharedContext);
+            });
+        } catch (Throwable $e) {
+            return tap($this->createEmergencyLogger(), function ($logger) use ($e) {
+                $logger->emergency('Unable to create configured logger. Using emergency logger.', [
+                    'exception' => $e,
+                ]);
+            });
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function resolve($name, ?array $config = null)
+    {
+        $config ??= $this->configurationFor($name);
+
+        if (is_null($config)) {
+            throw new InvalidArgumentException("Log [{$name}] is not defined.");
+        }
+
+        if (isset($this->customCreators[$config['driver']])) {
+            return $this->callCustomCreator($config);
+        }
+
+        $driverMethod = 'create'.ucfirst($config['driver']).'Driver';
+
+        if (method_exists($this, $driverMethod)) {
+            return $this->{$driverMethod}($config);
+        }
+
+        throw new InvalidArgumentException("Driver [{$config['driver']}] is not supported.");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function configurationFor($name)
+    {
+        return parent::configurationFor($name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function tap($name, Logger $logger)
+    {
+        foreach ($this->configurationFor($name)['tap'] ?? [] as $tap) {
+            [$class, $arguments] = $this->parseTap($tap);
+
+            $this->app->make($class)->__invoke($logger, ...explode(',', $arguments));
+        }
+
+        return $logger;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function parseTap($tap)
+    {
+        return parent::parseTap($tap);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function emergency($message, array $context = []): void
+    {
+        $this->driver()->emergency($message, $context);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function driver($driver = null)
+    {
+        return $this->get($this->parseDriver($driver));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function parseDriver($driver)
+    {
+        $driver ??= $this->getDefaultDriver();
+
+        if ($this->app->runningUnitTests()) {
+            $driver ??= 'null';
+        }
+
+        return $driver;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDefaultDriver()
+    {
+        return parent::getDefaultDriver();
     }
 
     /**
@@ -86,148 +205,6 @@ class Logbook extends LogManager
     /**
      * {@inheritDoc}
      */
-    public function driver($driver = null)
-    {
-        return $this->get($this->parseDriver($driver));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function get($name, ?array $config = null)
-    {
-        try {
-            return $this->channels[$name] ?? with($this->resolve($name, $config), function ($logger) use ($name) {
-                $sharedContext = isset($this->sharedContext) ? $this->sharedContext : [];
-
-                return $this->channels[$name] = $this->tap(
-                    $name,
-                    new Logger($logger, $this->app['events'])
-                )->withContext($sharedContext);
-            });
-        } catch (Throwable $e) {
-            return tap($this->createEmergencyLogger(), function ($logger) use ($e) {
-                $logger->emergency('Unable to create configured logger. Using emergency logger.', [
-                    'exception' => $e,
-                ]);
-            });
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function tap($name, Logger $logger)
-    {
-        foreach ($this->configurationFor($name)['tap'] ?? [] as $tap) {
-            [$class, $arguments] = $this->parseTap($tap);
-
-            $this->app->make($class)->__invoke($logger, ...explode(',', $arguments));
-        }
-
-        return $logger;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function parseTap($tap)
-    {
-        return parent::parseTap($tap);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function resolve($name, ?array $config = null)
-    {
-        $config ??= $this->configurationFor($name);
-
-        if (is_null($config)) {
-            throw new InvalidArgumentException("Log [{$name}] is not defined.");
-        }
-
-        if (isset($this->customCreators[$config['driver']])) {
-            return $this->callCustomCreator($config);
-        }
-
-        $driverMethod = 'create' . ucfirst($config['driver']) . 'Driver';
-
-        if (method_exists($this, $driverMethod)) {
-            return $this->{$driverMethod}($config);
-        }
-
-        throw new InvalidArgumentException("Driver [{$config['driver']}] is not supported.");
-    }
-
-    /**
-     * Creates an instance of LogBook driver.
-     *
-     * @param  array  $config
-     * @return LoggerInterface
-     */
-    protected function createLogbookDriver(array $config)
-    {
-        return new Monolog(
-            $this->parseChannel($config),
-            [new LogbookHandler($config, $this->level($config))],
-            [new LogbookProcessor()]
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function prepareHandlers(array $handlers)
-    {
-        foreach ($handlers as $key => $handler) {
-            $handlers[$key] = $this->prepareHandler($handler);
-        }
-
-        return $handlers;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function prepareHandler(HandlerInterface $handler, array $config = [])
-    {
-        if (isset($config['action_level'])) {
-            $handler = new FingersCrossedHandler(
-                $handler,
-                $this->actionLevel($config),
-                0,
-                true,
-                $config['stop_buffering'] ?? true
-            );
-        }
-
-        if (!$handler instanceof FormattableHandlerInterface) {
-            return $handler;
-        }
-
-        if (!isset($config['formatter'])) {
-            $handler->setFormatter($this->formatter());
-        } elseif ($config['formatter'] !== 'default') {
-            $handler->setFormatter($this->app->make($config['formatter'], $config['formatter_with'] ?? []));
-        }
-
-        return $handler;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function formatter()
-    {
-        return tap(new LineFormatter(null, $this->dateFormat, true, true), function ($formatter) {
-            $formatter->includeStacktraces();
-        });
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function shareContext(array $context)
     {
         foreach ($this->channels as $channel) {
@@ -255,30 +232,6 @@ class Logbook extends LogManager
         $this->sharedContext = [];
 
         return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getFallbackChannelName()
-    {
-        return parent::getFallbackChannelName();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function configurationFor($name)
-    {
-        return parent::configurationFor($name);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getDefaultDriver()
-    {
-        return parent::getDefaultDriver();
     }
 
     /**
@@ -314,31 +267,9 @@ class Logbook extends LogManager
     /**
      * {@inheritDoc}
      */
-    protected function parseDriver($driver)
-    {
-        $driver ??= $this->getDefaultDriver();
-
-        if ($this->app->runningUnitTests()) {
-            $driver ??= 'null';
-        }
-
-        return $driver;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function getChannels()
     {
         return parent::getChannels();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function emergency($message, array $context = []): void
-    {
-        $this->driver()->emergency($message, $context);
     }
 
     /**
@@ -411,5 +342,79 @@ class Logbook extends LogManager
     public function __call($method, $parameters)
     {
         return $this->driver()->$method(...$parameters);
+    }
+
+    /**
+     * Creates an instance of LogBook driver.
+     *
+     * @param  array  $config
+     *
+     * @return LoggerInterface
+     */
+    protected function createLogbookDriver(array $config)
+    {
+        return new Monolog(
+            $this->parseChannel($config),
+            [new LogbookHandler($config, $this->level($config), true, $this->transport)],
+            [new LogbookProcessor()]
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function prepareHandlers(array $handlers)
+    {
+        foreach ($handlers as $key => $handler) {
+            $handlers[$key] = $this->prepareHandler($handler);
+        }
+
+        return $handlers;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function prepareHandler(HandlerInterface $handler, array $config = [])
+    {
+        if (isset($config['action_level'])) {
+            $handler = new FingersCrossedHandler(
+                $handler,
+                $this->actionLevel($config),
+                0,
+                true,
+                $config['stop_buffering'] ?? true
+            );
+        }
+
+        if ( ! $handler instanceof FormattableHandlerInterface) {
+            return $handler;
+        }
+
+        if ( ! isset($config['formatter'])) {
+            $handler->setFormatter($this->formatter());
+        } elseif ($config['formatter'] !== 'default') {
+            $handler->setFormatter($this->app->make($config['formatter'], $config['formatter_with'] ?? []));
+        }
+
+        return $handler;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function formatter()
+    {
+        return tap(new LineFormatter(null, $this->dateFormat, true, true), function ($formatter) {
+            $formatter->includeStacktraces();
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getFallbackChannelName()
+    {
+        return parent::getFallbackChannelName();
     }
 }

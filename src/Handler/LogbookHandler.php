@@ -10,18 +10,21 @@ use Monolog\LogRecord;
 use Psr\Log\LogLevel;
 use Solvrtech\Logbook\Formatter\LogbookFormatter;
 use Solvrtech\Logbook\LogbookConfig;
-use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Solvrtech\Logbook\Transport\TransportInterface;
 
 class LogbookHandler extends AbstractProcessingHandler
 {
     use LogbookConfig;
 
+    private TransportInterface $transport;
+
     public function __construct(
         private array $config,
         int|string|LogLevel|Level $level = LogLevel::DEBUG,
-        bool $bubble = true
+        bool $bubble = true,
+        TransportInterface $transport
     ) {
+        $this->transport = $transport;
         parent::__construct($level, $bubble);
     }
 
@@ -32,25 +35,17 @@ class LogbookHandler extends AbstractProcessingHandler
      */
     protected function write(LogRecord|array $record): void
     {
-        $httpClient = HttpClient::create();
         if ($this->getMinLevel() <= $this->toIntLevel($record['level_name'])) {
-            try {
-                $httpClient->request(
-                    'POST',
-                    "{$this->getAPIUrl()}/api/log/save",
-                    [
-                        'headers' => [
-                            'Content-Type' => 'application/json',
-                            'Accept' => 'application/json',
-                            'x-lb-token' => $this->getAPIkey(),
-                            'x-lb-version' => $this->getVersion(),
-                            'x-lb-instance-id' => $this->getInstanceId(),
-                        ],
-                        'body' => json_encode($record['formatted']),
-                    ]
-                );
-            } catch (Exception|TransportExceptionInterface $e) {
-            }
+            $headers = [
+                'Content-Type'     => 'application/json',
+                'Accept'           => 'application/json',
+                'x-lb-token'       => $this->getAPIKey(),
+                'x-lb-version'     => $this->getVersion(),
+                'x-lb-instance-id' => $this->getInstanceId(),
+                'url'              => $this->getAPIUrl(),
+            ];
+
+            $this->transport->send(json_encode($record['formatted']), $headers);
         }
     }
 
@@ -67,7 +62,7 @@ class LogbookHandler extends AbstractProcessingHandler
     /**
      * Translate log level into int level
      *
-     * @param string $level
+     * @param  string  $level
      *
      * @return int
      */
