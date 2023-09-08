@@ -31,7 +31,7 @@ return [
             'host' => env('REDIS_HOST', ''),
             'password' => env('REDIS_PASSWORD', ''),
             'port' => env('REDIS_PORT', ''),
-            'stream' => env('logs'),
+            'stream' => 'logs',
             'batch' => env('LOGBOOK_BATCH', 15),
         ],
         'database' => [
