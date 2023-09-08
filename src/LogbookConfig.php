@@ -77,7 +77,7 @@ trait LogbookConfig
         ];
 
         if (config()->has('app.version')) {
-            $appVersion     = config('app.version');
+            $appVersion = config('app.version');
             $version['app'] = is_string($appVersion) ? $appVersion : '';
         }
 
@@ -94,12 +94,12 @@ trait LogbookConfig
     {
         $config = config('logbook');
 
-        if ( ! isset($config['options']['redis'])) {
+        if (!isset($config['options']['redis'])) {
             throw new Exception('Logbook transport not found');
         }
 
-        $redis             = $config['options']['redis'];
-        $redis['password'] = ! empty($redis['password']) ? $redis['password'] : null;
+        $redis = $config['options']['redis'];
+        $redis['password'] = !empty($redis['password']) ? $redis['password'] : null;
 
         return $redis;
     }
