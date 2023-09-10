@@ -64,6 +64,7 @@ class DatabaseTransport implements TransportInterface, AsyncTransportInterface
      */
     public function get(): ?array
     {
+        $this->createLogsTable();
         $response = DB::table($this->log_table)
             ->whereNull('sent_at')
             ->limit($this->databaseBatchLimit())
