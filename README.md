@@ -1,12 +1,13 @@
 # laravel-logbook
 
-Installitation
+### Installitation
 
 ```bash
 composer require solvrtech/laravel-logbook
 ```
 
-Configuration<br>
+### Configuration
+
 You should publish the laravel-logbook config file with:
 
 ```bash
@@ -39,12 +40,23 @@ LOGBOOK_API_KEY="4eaa39a6ff57c4..."
 LOGBOOK_INSTANCE_ID="default_server"
 
 # Logbook transport to handle logs either synchronously or asynchronously
-# Transport drivers: 'sync', 'redis', and 'database'
+# Transports: 'sync', 'redis', and 'database'
 LOGBOOK_TRANSPORT='sync'
 
 # Number of logs to be sent to the logbook application
 LOGBOOK_BATCH=15
 ```
+
+### Consume Logs (Asynchronous Transport)
+
+When you use asynchronous transport to handle the logs, you need to consume them. You can do this with
+the `logbook:log:consume` command:
+
+```bash
+php artisan logbook:log:consume
+```
+
+### Configure App Version
 
 ```bash
 // config/app.php
