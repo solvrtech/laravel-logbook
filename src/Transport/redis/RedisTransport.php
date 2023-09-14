@@ -3,6 +3,7 @@
 namespace Solvrtech\Logbook\Transport\redis;
 
 use Exception;
+use Solvrtech\Logbook\Exception\TransportException;
 use Solvrtech\Logbook\LogbookConfig;
 use Solvrtech\Logbook\Transport\AsyncTransportInterface;
 use Solvrtech\Logbook\Transport\TransportInterface;
@@ -21,8 +22,8 @@ class RedisTransport implements TransportInterface, AsyncTransportInterface
     /**
      * Send log to the redis with asynchronous behavior
      *
-     * @param  string  $body
-     * @param  array  $headers
+     * @param string $body
+     * @param array $headers
      *
      * @return array
      */
@@ -31,6 +32,7 @@ class RedisTransport implements TransportInterface, AsyncTransportInterface
         try {
             $this->connection->add($body, $headers);
         } catch (Exception $exception) {
+            throw new TransportException($exception->getMessage(), 0, $exception);
         }
 
         return json_decode($body, true);
@@ -59,13 +61,14 @@ class RedisTransport implements TransportInterface, AsyncTransportInterface
     /**
      * Deletes items based on their IDs.
      *
-     * @param  array|null  $ids
+     * @param array|null $ids
      */
     public function delete(?array $ids = null): void
     {
         try {
             $this->connection->ack($ids);
         } catch (Exception $exception) {
+            throw new TransportException($exception->getMessage(), 0, $exception);
         }
     }
 }

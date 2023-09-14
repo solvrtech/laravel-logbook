@@ -10,7 +10,7 @@ use Solvrtech\Logbook\Check\CPULoadCheck;
 use Solvrtech\Logbook\Check\DataBaseCheck;
 use Solvrtech\Logbook\Check\MemoryCheck;
 use Solvrtech\Logbook\Check\UsedDiskCheck;
-use Solvrtech\Logbook\Console\ConsumeCommand;
+use Solvrtech\Logbook\Command\ConsumeCommand;
 use Solvrtech\Logbook\Middleware\LogbookMiddleware;
 use Solvrtech\Logbook\Transport\database\DatabaseTransport;
 use Solvrtech\Logbook\Transport\redis\RedisTransport;

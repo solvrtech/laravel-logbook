@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Solvrtech\Logbook\Exception\TransportException;
 use Solvrtech\Logbook\LogbookConfig;
 use Solvrtech\Logbook\Transport\AsyncTransportInterface;
 use Solvrtech\Logbook\Transport\TransportInterface;
@@ -38,6 +39,7 @@ class DatabaseTransport implements TransportInterface, AsyncTransportInterface
                 ),
             ]);
         } catch (Exception $exception) {
+            throw new TransportException($exception->getMessage(), 0, $exception);
         }
 
         return json_decode($body, true);

@@ -1,9 +1,10 @@
 <?php
 
-namespace Solvrtech\Logbook\Console;
+namespace Solvrtech\Logbook\Command;
 
 use Exception;
 use Illuminate\Console\Command;
+use Solvrtech\Logbook\Exception\RuntimeException;
 use Solvrtech\Logbook\Transport\AsyncTransportInterface;
 use Solvrtech\Logbook\Transport\database\DatabaseTransport;
 use Solvrtech\Logbook\Transport\redis\RedisTransport;
@@ -52,6 +53,7 @@ class ConsumeCommand extends Command
                 try {
                     self::send($batch, $ids);
                 } catch (Exception $exception) {
+                    throw new RuntimeException($exception->getMessage(), 0, $exception);
                 }
 
                 [$batch, $ids] = $this->transport->get();
@@ -91,6 +93,7 @@ class ConsumeCommand extends Command
                 ]
             );
         } catch (Exception|TransportExceptionInterface $exception) {
+            throw new RuntimeException($exception->getMessage(), 0, $exception);
         }
 
         if ($this->transport instanceof RedisTransport) {
