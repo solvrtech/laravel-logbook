@@ -41,6 +41,8 @@ class ConsumeCommand extends Command
      */
     public function handle()
     {
+        sleep(60);
+
         while (true) {
             if (!$this->transport instanceof AsyncTransportInterface) {
                 sleep(60);
@@ -53,7 +55,7 @@ class ConsumeCommand extends Command
                 try {
                     self::send($batch, $ids);
                 } catch (Exception $exception) {
-                    throw new RuntimeException($exception->getMessage(), 0, $exception);
+                    throw new RuntimeException('LogBook Error: '.$exception->getMessage(), 0, $exception);
                 }
 
                 [$batch, $ids] = $this->transport->get();
