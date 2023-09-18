@@ -113,13 +113,8 @@ LOGBOOK_BATCH=15
 - **LOGBOOK_BATCH:**
   maximum number of logs to be sent from your application into LogBook in a batch.
 
-After configuring the storage for queuing of submitted logs, you will need to create a background task that will run:
-
-```bash
-php artisan logbook:log:consume 
-```
-
-periodically. You can set this by using Systemd or Supervisor.
+After configuring the storage for queuing of submitted logs, you will need to create a background task that will
+run: **php artisan logbook:log:consume** periodically. You can set this by using Systemd or Supervisor.
 
 ### 2.a Using Systemd
 
